@@ -31,7 +31,7 @@ class ListBooks extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('📚 Semua')
+            'all' => Tab::make('📚 All')
                 ->modifyQueryUsing(fn ($query) => $query), // default tanpa filter
         ];
 

@@ -30,23 +30,23 @@ class BookResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('category_id')
-                    ->relationship('category', 'name')
-                    ->label('kategori')
-                    ->required(),
-
                 TextInput::make('title')
-                    ->label('Judul')
+                    ->label('Book Title')
                     ->required()
                     ->unique(ignoreRecord:true),
 
                 TextInput::make('author')
-                    ->label('Penulis')
-                    ->required(),
+                    ->label('Writer'),
 
                 TextInput::make('tahun_terbit')
-                    ->label('tahun terbit')
-                    ->required(),
+                    ->label('Published Year'),
+
+                Select::make('category_id')
+                    ->relationship('category', 'name')
+                    ->label('Categories')
+                    ->preload()
+                    ->searchable()
+                    ->native(false),
                 //
             ]);
     }
@@ -56,25 +56,26 @@ class BookResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label('Judul Buku')
+                    ->label('Book Title')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('author')
-                    ->label('Penulis')
+                    ->label('Writer')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('tahun_terbit')
-                    ->label('Tahun Terbit'),
+                    ->label('Published Year'),
 
                 TextColumn::make('category.name')
                     ->label('Categories')
                     ->searchable()
-                    ->sortable(),   
+                    ->sortable(),
 
                 TextColumn::make('updated_at')
-                    ->label('Last Updated'),
+                    ->label('Last Updated')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->format('F j, Y')),
                 //
             ])
             ->filters([
@@ -82,6 +83,7 @@ class BookResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
